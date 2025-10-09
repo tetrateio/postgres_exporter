@@ -81,20 +81,20 @@ workflows:
             only: /^(main|master|release-.*|.*build-all.*)$/
           tags:
             only: /^v.*/
-    - prometheus/publish_master:
-        context: org-context
-        docker_hub_organization: prometheuscommunity
-        quay_io_organization: prometheuscommunity
-        requires:
-        - test
-        - build_all
-        filters:
-          branches:
-            only: master
+    # - prometheus/publish_master:
+    #     context: org-context
+    #     docker_hub_organization: prometheuscommunity
+    #     quay_io_organization: prometheuscommunity
+    #     requires:
+    #     - test
+    #     - build_all
+    #     filters:
+    #       branches:
+    #         only: master
     - prometheus/publish_release:
-        context: org-context
-        docker_hub_organization: prometheuscommunity
-        quay_io_organization: prometheuscommunity
+        context: org-global
+        docker_hub_organization: tetrate
+        # quay_io_organization: prometheuscommunity
         requires:
         - test
         - build_all
