@@ -45,6 +45,22 @@ jobs:
     - run: make build
     - run: make test
 
+# Customized publish job to use our docker variables and just build/publish images, not cutting github releases.
+# See:
+# - https://circleci.com/developer/orbs/orb/prometheus/prometheus
+# - https://github.com/prometheus/circleci
+  publish_images:
+    docker:
+      - image: cimg/go:1.24
+    steps:
+      - prometheus/setup_build_environment:
+          docker_version: ""
+      - prometheus/publish_release_images:
+          registry: docker.io
+          organization: tetrate
+          login_variable: DOCKER_USER
+          password_variable: DOCKER_PASS
+
 workflows:
   version: 2
   postgres_exporter:
@@ -81,25 +97,36 @@ workflows:
             only: /^(main|master|release-.*|.*build-all.*)$/
           tags:
             only: /^v.*/
-    - prometheus/publish_master:
-        context: org-context
-        docker_hub_organization: prometheuscommunity
-        quay_io_organization: prometheuscommunity
+    # Build and publish images to the tetrate container image registry.
+    - publish_images:
+        context: org-global
         requires:
-        - test
-        - build_all
-        filters:
-          branches:
-            only: master
-    - prometheus/publish_release:
-        context: org-context
-        docker_hub_organization: prometheuscommunity
-        quay_io_organization: prometheuscommunity
-        requires:
-        - test
-        - build_all
+          - test
+          - build_all
         filters:
           tags:
             only: /^v.*/
           branches:
             ignore: /.*/
+    # - prometheus/publish_master:
+    #     context: org-context
+    #     docker_hub_organization: prometheuscommunity
+    #     quay_io_organization: prometheuscommunity
+    #     requires:
+    #     - test
+    #     - build_all
+    #     filters:
+    #       branches:
+    #         only: master
+    # - prometheus/publish_release:
+    #     context: org-context
+    #     docker_hub_organization: prometheuscommunity
+    #     # quay_io_organization: prometheuscommunity
+    #     requires:
+    #     - test
+    #     - build_all
+    #     filters:
+    #       tags:
+    #         only: /^v.*/
+    #       branches:
+    #         ignore: /.*/

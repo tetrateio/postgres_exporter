@@ -445,3 +445,17 @@ docker run -p 5432:5432 -e POSTGRES_DB=circle_test -e POSTGRES_USER=postgres -e 
 # Run the integration tests
 DATA_SOURCE_NAME='postgresql://postgres:test@localhost:5432/circle_test?sslmode=disable' GOOPTS='-v -tags integration' make test
 ```
+
+# **Tetrate CVE builds**
+Upstream is not fixing CVEs reported by security scanners, but not applicable to postgres_exporter image.
+These false positives can be fixed by cutting tetrate specific patch releases as follows:
+- Push a commit to a release branch in our fork (e.g. `release-v0.18.1` branch) with the changes to fix the CVEs.
+  - Include changes to the `VERSION` file to the new version name following the pattern `<current-version>-tetrate-v<patch-number>`. For example `0.18.1-tetrate-v0` is the first CVEs fixing patch for `0.18.1`.
+- Once the PR is approved and merged:
+  - Create the tag and push it to the repository following the pattern `v<new-version>`. For example `v0.18.1-tetrate-v0`.
+  - CircleCI will automatically build the images and push them to the [tetrate docker hub repository](https://hub.docker.com/r/tetrate/postgres-exporter).
+  - Update tetrate repository to use the new image version.
+Further details for troubleshooting:
+  - tag push triggers the `publish_images` custom job in CircleCI that can be found in the `.circleci/config.yml` file.
+  - This job uses the [prometheus/publish_release_images](https://circleci.com/developer/orbs/orb/prometheus/publish_release_images) CircleCI orb.
+  - CircleCI job details can be found in the [CircleCI dashboard for this project](https://app.circleci.com/projects/github/tetrateio/postgres_exporter).
