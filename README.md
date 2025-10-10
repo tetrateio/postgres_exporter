@@ -451,10 +451,10 @@ Upstream is not fixing CVEs reported by security scanners, but not applicable to
 These false positives can be fixed by cutting tetrate specific patch releases as follows:
 - Push a commit to a release branch in our fork (e.g. `release-v0.18.1` branch) with the changes to fix the CVEs.
   - Include changes to the `VERSION` file to the new version name following the pattern `<current-version>-tetrate-v<patch-number>`. For example `0.18.1-tetrate-v0` is the first CVEs fixing patch for `0.18.1`.
-- Once the PR is approved and merged:
-  - Create the tag and push it to the repository following the pattern `v<new-version>`. For example `v0.18.1-tetrate-v0`.
+- Once the PR is approved and merged, create a tag following the pattern `v<new-version>`. For example `v0.18.1-tetrate-v0`. Push it to the repository.
   - CircleCI will automatically build the images and push them to the [tetrate docker hub repository](https://hub.docker.com/r/tetrate/postgres-exporter).
-  - Update tetrate repository to use the new image version.
+- Update tetrate repository to use the new image version.
+
 Further details for troubleshooting:
   - tag push triggers the `publish_images` custom job in CircleCI that can be found in the `.circleci/config.yml` file.
   - This job uses the [prometheus/publish_release_images](https://circleci.com/developer/orbs/orb/prometheus/publish_release_images) CircleCI orb.
