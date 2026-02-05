@@ -451,6 +451,7 @@ Upstream is not fixing CVEs reported by security scanners, but not applicable to
 These false positives can be fixed by cutting tetrate specific patch releases as follows:
 - Push a commit to a release branch in our fork (e.g. `release-v0.18.1` branch) with the changes to fix the CVEs.
   - Include changes to the `VERSION` file to the new version name following the pattern `<current-version>-tetrate-v<patch-number>`. For example `0.18.1-tetrate-v0` is the first CVEs fixing patch for `0.18.1`.
+  **NOTE**: If the fix requires just to bump a golang patch version, just update the `VERSION` file. the CI will use a runner with the updated golang version to build the image.
 - Once the PR is approved and merged, create a tag following the pattern `v<new-version>`. For example `v0.18.1-tetrate-v0`. Push it to the repository.
   - CircleCI will automatically build the images and push them to the [tetrate docker hub repository](https://hub.docker.com/r/tetrate/postgres-exporter).
 - Update tetrate repository to use the new image version.
